@@ -1,3 +1,35 @@
+<?php 
+// accès à la base de données
+include("config/configuration.php");
+try {
+  $dbh = new PDO($dsn, $user, $password);
+  $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+  echo 'Échec lors de la connexion : ' . $e->getMessage();
+}
+
+/* Récupération des 3 dernieres annonces pour générer la page */
+$requete='SELECT * FROM annonces ORDER BY date LIMIT 3';
+$resultats= $dbh -> query($requete);
+$tableau3Annonces = $resultats->fetchAll(PDO::FETCH_ASSOC);
+$resultats -> closeCursor();
+
+
+// récupération des annonces si on a un département
+if($_GET["departement"]){
+  // Récupération des annonces de ce département pour générer la page 
+  $requete='SELECT * FROM annonces WHERE departement='.$_GET["departement"];
+  // on modifie la requête s'il y a une contrainte de classement
+  if(isset($_GET["classement"])){
+    $requete=$requete.' ORDER BY '.$_GET["classement"];
+  }
+  
+  $resultats= $dbh -> query($requete);
+  $tableauAnnonces = $resultats->fetchAll(PDO::FETCH_ASSOC);
+  $resultats -> closeCursor();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -14,21 +46,93 @@
   
   <!-- utilisation de Boostrap (via un CDN) -->
   <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-  
-  <!-- Optional theme -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
   
   <!-- style CSS perso-->
   <link rel="stylesheet" media="screen" href="css/style.css">
   
 </head>
 <body>
+  <div class="container">
+    <div class="row">
+      <h1>Site de petites annonces</h1>
+    </div>
+    <div class="row">
+      <h2>Les dernières petites annonces postées</h2>
+      <div class="col-lg-4">
+        <h3>Annonce 1</h3>
+        <p>dizohdmozehrfhmezr</p>
+      </div>
+      <div class="col-lg-4">
+        <h3>Annonce 2</h3>
+        <p>jdjdjdjd djjdjdj</p>
+      </div>
+      <div class="col-lg-4">
+        <h3>Annonce 3</h3>
+        <p>ddd ddd </p>
+      </div>
+    </div>
+    
+    <hr/>
+    <form method="GET">
+      <div class="mb-3">
+        <label for="departement" class="form-label">Département</label>
+        <select name="departement">
+          <option value="1">Loire</option>
+          <option value="2">Haute-Loire</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        Classer par: <br/>
+        <input class="form-check-input" type="radio" name="classement" id="classement1" value="date">
+        <label class="form-check-label" for="classement1">
+          date
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="classement" id="classement2" value="popularite" >
+        <label class="form-check-label" for="classement2">
+          popularite
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary">Voir les annonces</button>
+    </form>
+    <hr/>
+    
+    <?php
+    // affichage des annonces si on a un département
+    if($_GET["departement"]):
+      ?>
+      <div class="row">
+        <h2>Les dernières petites annonces postées</h2>
+        <div class="col-lg-4">
+          <h3>Annonce 1</h3>
+          <p>dizohdmozehrfhmezr</p>
+        </div>
+        <div class="col-lg-4">
+          <h3>Annonce 2</h3>
+          <p>jdjdjdjd djjdjdj</p>
+        </div>
+        <div class="col-lg-4">
+          <h3>Annonce 3</h3>
+          <p>ddd ddd </p>
+        </div>
+        <div class="col-lg-4">
+          <h3>Annonce 4</h3>
+          <p>ddd ddd </p>
+        </div>
+      </div>      
+      <?php
+    endif;
+    ?>
+    
+  </div>
   
   
   <!-- utilisation de Boostrap (via un CDN) -->
-  <!-- Latest compiled and minified JavaScript -->
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  
   
 </body>
 </html>
