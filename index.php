@@ -1,6 +1,8 @@
 <?php 
-// accès à la base de données
+// pour se connecter à la base de données
 include("config/configuration.php");
+
+// connection
 try {
   $dbh = new PDO($dsn, $user, $password);
   $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -14,6 +16,11 @@ $resultats= $dbh -> query($requete);
 $tableau3Annonces = $resultats->fetchAll(PDO::FETCH_ASSOC);
 $resultats -> closeCursor();
 
+/* Récuperation des départements ayant des annonces pour générer la liste de sélection */
+$requete='SELECT * FROM departements WHERE id IN (SELECT DISTINCT(departement) FROM annonces)';
+$resultats= $dbh -> query($requete);
+$tableauDepartements = $resultats->fetchAll(PDO::FETCH_ASSOC);
+$resultats -> closeCursor();
 
 // récupération des annonces si on a un département
 if($_GET["departement"]){
@@ -26,6 +33,7 @@ if($_GET["departement"]){
   
   $resultats= $dbh -> query($requete);
   $tableauAnnonces = $resultats->fetchAll(PDO::FETCH_ASSOC);
+  $nbAnnonces=count($tableauAnnonces);
   $resultats -> closeCursor();
 }
 
@@ -59,18 +67,20 @@ if($_GET["departement"]){
     </div>
     <div class="row">
       <h2>Les dernières petites annonces postées</h2>
-      <div class="col-lg-4">
-        <h3>Annonce 1</h3>
-        <p>dizohdmozehrfhmezr</p>
-      </div>
-      <div class="col-lg-4">
-        <h3>Annonce 2</h3>
-        <p>jdjdjdjd djjdjdj</p>
-      </div>
-      <div class="col-lg-4">
-        <h3>Annonce 3</h3>
-        <p>ddd ddd </p>
-      </div>
+      <?php
+      for($i=0;$i<count($tableau3Annonces);$i++){
+        ?>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+            <h3 class="card-title"><?php echo $tableau3Annonces[$i]["titre"];?></h3>
+            <p class="card-text"><?php echo $tableau3Annonces[$i]["descriptif"];?></p>
+          </div>
+        </div>
+        </div>          
+        <?php
+      }
+      ?>
     </div>
     
     <hr/>
@@ -78,8 +88,11 @@ if($_GET["departement"]){
       <div class="mb-3">
         <label for="departement" class="form-label">Département</label>
         <select name="departement">
-          <option value="1">Loire</option>
-          <option value="2">Haute-Loire</option>
+          <?php
+          foreach($tableauDepartements as $dep){
+            echo '<option value="'.$dep["id"].'">'.$dep["nom"].'</option>';
+          }
+           ?>
         </select>
       </div>
       <div class="mb-3">
@@ -99,28 +112,27 @@ if($_GET["departement"]){
     </form>
     <hr/>
     
+    <div class="row">
+      <h2>Les dernières petites annonces postées</h2>
     <?php
     // affichage des annonces si on a un département
     if($_GET["departement"]):
+      if($nbAnnonces==0){
+        ?>
+        Aucune annonce ne correspond à vos critères
+        <?php
+      }
+      else{
+        for($i=0;$i<$nbAnnonces;$i++){
+          ?>
+          <div class="col-lg-4">
+            <h3><?php echo $tableauAnnonces[$i]["titre"];?></h3>
+            <p><?php echo $tableauAnnonces[$i]["descriptif"];?></p>
+          </div>          
+          <?php
+        }
+      }
       ?>
-      <div class="row">
-        <h2>Les dernières petites annonces postées</h2>
-        <div class="col-lg-4">
-          <h3>Annonce 1</h3>
-          <p>dizohdmozehrfhmezr</p>
-        </div>
-        <div class="col-lg-4">
-          <h3>Annonce 2</h3>
-          <p>jdjdjdjd djjdjdj</p>
-        </div>
-        <div class="col-lg-4">
-          <h3>Annonce 3</h3>
-          <p>ddd ddd </p>
-        </div>
-        <div class="col-lg-4">
-          <h3>Annonce 4</h3>
-          <p>ddd ddd </p>
-        </div>
       </div>      
       <?php
     endif;
