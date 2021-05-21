@@ -113,7 +113,7 @@ if($_GET["departement"]){
     <hr/>
     
     <div class="row">
-      <h2>Les dernières petites annonces postées</h2>
+      <h2>Les annonces de votre département</h2>
     <?php
     // affichage des annonces si on a un département
     if($_GET["departement"]):
