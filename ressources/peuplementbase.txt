@@ -1,6 +1,0 @@
-Récupération des noms des départements sur le site : https://www.presta4live.com/listes-utiles-au-format-csv/
-Données converties en SQL avec l'outil: http://convertcsv.com/csv-to-sql.htm
-- ajout avant le contenu CSV des noms des champs: "id"; "nom"; "numero"
-- champ "Create Table/View" décoché (on a déjà la table)
-- "Generate Input" -> "CSV to SQL Insert"
-- requêtes SQL collées pour créer les champs
