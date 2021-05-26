@@ -86,6 +86,7 @@ if($_GET["departement"]){
     <hr/>
     <form method="GET">
       <div class="mb-3">
+        <h3>Rechercher une annonce</h3>
         <label for="departement" class="form-label">Département</label>
         <select name="departement">
           <?php
@@ -111,12 +112,14 @@ if($_GET["departement"]){
       <button type="submit" class="btn btn-primary">Voir les annonces</button>
     </form>
     <hr/>
-    
+    <?php
+    // affichage des annonces si on a un département
+    if($_GET["departement"]):
+      ?>    
     <div class="row">
       <h2>Les annonces de votre département</h2>
     <?php
     // affichage des annonces si on a un département
-    if($_GET["departement"]):
       if($nbAnnonces==0){
         ?>
         Aucune annonce ne correspond à vos critères
