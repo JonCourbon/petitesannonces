@@ -23,7 +23,7 @@ $tableauDepartements = $resultats->fetchAll(PDO::FETCH_ASSOC);
 $resultats -> closeCursor();
 
 // récupération des annonces si on a un département
-if($_GET["departement"]){
+if(isset($_GET["departement"])):
   // Récupération des annonces de ce département pour générer la page 
   $requete='SELECT * FROM annonces WHERE departement='.$_GET["departement"];
   // on modifie la requête s'il y a une contrainte de classement
@@ -114,7 +114,7 @@ if($_GET["departement"]){
     <hr/>
     <?php
     // affichage des annonces si on a un département
-    if($_GET["departement"]):
+    if(isset($_GET["departement"])):
       ?>    
     <div class="row">
       <h2>Les annonces de votre département</h2>
